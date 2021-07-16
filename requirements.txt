@@ -1,0 +1,6 @@
+streamlit
+dart-fss
+opendartreader
+finance-datareader
+tabulate
+numpy
