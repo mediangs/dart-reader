@@ -389,6 +389,7 @@ def get_accounts():
                             {'account_nm': '분기순이익', 'account_detail': '지배기업의 소유주'},
                             {'account_nm': '분기순이익', 'account_detail': '지배기업 소유주'},
                             {'account_nm': '분기순이익', 'account_detail': '지배지분 | 이익잉여금'}, #SK가스
+                            {'account_nm': '분기순손실', 'account_detail': '지배기업의 소유주'},
                             {'account_nm': '반기순이익', 'account_detail': '지배기업의 소유주'},  # ifrs_ProfitLoss
                             {'account_nm': '반기순이익', 'account_detail': '지배기업 소유주'},
                             {'account_nm': '반기순이익', 'account_detail': '지배지분 | 이익잉여금'},
@@ -428,7 +429,7 @@ def test():
     # df = company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
 
     # df = quarterly_company_performance(corp_list.find_by_corp_name('삼성전자', exactly=True)[0], 2019, 2021, opendartreader)
-    df = finstate_in_quarter('018670', 2018, get_accounts(), opendartreader)
+    df = finstate_in_quarter('051500', 2020, get_accounts(), opendartreader)
     print(df)
 
 
