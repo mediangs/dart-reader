@@ -42,6 +42,7 @@ def app():
         if st.button('분기별 보고서 : Get data!'):
             st.subheader(f'{selected_company}')
             q_company_sheet = quarterly_company_performance(company, start, 2021, opendart)
+            #components.html(q_company_sheet.to_html())
             st.write(q_company_sheet)
 
 

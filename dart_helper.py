@@ -7,7 +7,7 @@ import re
 import numpy as np
 from datetime import date
 from bs4 import BeautifulSoup
-
+from pandas.api.types import is_numeric_dtype
 
 def pretty_statement(statement):
     """
@@ -217,16 +217,17 @@ def quarterly_company_performance(company, start, end, odr):
 
     for column in merged:
         order = next(item for item in accounts if item["label"] == column)['order']
-        new_col_name = f'{order}.{column}(억)'
-        merged[new_col_name] = merged[column] / 100000000
-        merged[new_col_name] = merged[new_col_name].map('{:,.0f}'.format)
+        if is_numeric_dtype(merged[column]):
+            new_col_name = f'{order}.{column}(억)'
+            merged[new_col_name] = merged[column] / 100000000
+            merged[new_col_name] = merged[new_col_name].map('{:,.0f}'.format)
+        else:
+            new_col_name = f'{order}.{column}'
+            merged[new_col_name] = merged[column]
 
     merged = merged[sorted(merged.columns.tolist())]
-
     denominating_columns = [e['label'] for e in accounts]
-
     merged.drop(denominating_columns, axis=1, inplace=True)
-
 
     return merged
 
@@ -309,18 +310,29 @@ def finstate_in_quarter(stock_code, year, accounts, opendart):
 
     dfs = []
     for code, quarter in reprt_code.items():
+
         finstate = opendart.finstate_all(stock_code, year, reprt_code=code)
+
         if finstate is not None:
             series = []
             for account in accounts:
-                account_row = account_meet_conditions(finstate, account['conditions'])
-                if account_row is not None:
-                    this_year = account_row.iloc[0]['thstrm_amount']
-                    info = {f'{year}.{quarter}': int(this_year) if len(this_year) > 0 else 0}
-
-                    s = pd.Series(info, name=account['label'])
+                if account['label'] == '보고서':
+                    sub_docs = opendart.sub_docs(finstate['rcept_no'][0], match='사업의 내용')
+                    _url = sub_docs.iloc[0]['url']
+                    #_url = f'<a href="{_url}">보고서</a>'
+                    info = {f'{year}.{quarter}': _url}
+                    s = pd.Series(info, name='보고서')
                     s.index.name = 'year'
                     series.append(s)
+                else:
+                    account_row = account_meet_conditions(finstate, account['conditions'])
+                    if account_row is not None:
+                        this_year = account_row.iloc[0]['thstrm_amount']
+                        info = {f'{year}.{quarter}': int(this_year) if len(this_year) > 0 else 0}
+
+                        s = pd.Series(info, name=account['label'])
+                        s.index.name = 'year'
+                        series.append(s)
 
             dfs.append(pd.DataFrame({s.name: s for s in series}))
 
@@ -417,7 +429,11 @@ def get_accounts():
 
             {'label': '부채총계', 'order': 7,
              'conditions': [{'account_id': 'full_Liabilities'},
-                            {'account_nm': '부채총계'}]}
+                            {'account_nm': '부채총계'}]},
+
+            {'label': '보고서', 'order': 8,
+             'conditions': []}
+
             ]
 
 
@@ -428,8 +444,8 @@ def test():
     corp_list = dart.get_corp_list()
     # df = company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
 
-    # df = quarterly_company_performance(corp_list.find_by_corp_name('삼성전자', exactly=True)[0], 2019, 2021, opendartreader)
-    df = finstate_in_quarter('051500', 2020, get_accounts(), opendartreader)
+    df = quarterly_company_performance(corp_list.find_by_corp_name('삼성전자', exactly=True)[0], 2019, 2021, opendartreader)
+    #df = finstate_in_quarter('051500', 2020, get_accounts(), opendartreader)
     print(df)
 
 
