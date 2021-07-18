@@ -4,3 +4,5 @@ opendartreader
 finance-datareader
 tabulate
 numpy
+beautifulsoup4
+requests
