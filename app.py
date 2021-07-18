@@ -1,7 +1,7 @@
 import streamlit as st
 import dart_fss as dart
 import OpenDartReader
-from dart_helper import company_performance, quarterly_company_performance
+from statement_helper import yearly_company_performance, quarterly_company_performance
 
 
 corps_loaded = False
@@ -36,7 +36,7 @@ def app():
 
         if st.button('년간 사업보고서 : Get data!'):
             st.subheader(f'{selected_company}')
-            company_sheet = company_performance(company, start, 2021, opendart)
+            company_sheet = yearly_company_performance(company, start, 2021, opendart)
             st.write(company_sheet)
 
         if st.button('분기별 보고서 : Get data!'):
