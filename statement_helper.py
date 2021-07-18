@@ -29,9 +29,11 @@ def account_meet_conditions(df, conditions):
     for c in conditions:
         r = df[eval(_conditional_exp(c))]
         if len(r) > 0:
+            print(f'{_conditional_exp(c)} 을 찾음')
             return r
         else:
-            print(f'{_conditional_exp(c)} 를 만족하는 row 는 없음')
+            pass
+            # print(f'{_conditional_exp(c)} 를 만족하는 row 는 없음')
     return None
 
 
@@ -72,25 +74,6 @@ def pick_common_columns(picking_columns, all_columns):
     return list(set(all_columns) & set(picking_columns))
 
 
-def financial_statement(company, end, odr, start):
-
-    accounts = get_accounts()
-    mdf = yearly_finstate(company.corp_code, start, end, accounts, odr)
-
-    denominating_columns = [e['label'] for e in accounts]
-    common_denominating_columns = pick_common_columns(denominating_columns, mdf.columns)
-
-    for column in common_denominating_columns:
-        order = next(item for item in accounts if item["label"] == column)['order']
-        new_col_name = f'{order}.{column}(억)'
-        mdf[new_col_name] = mdf[column] / 100000000
-        mdf[new_col_name] = mdf[new_col_name].map('{:,.0f}'.format)
-
-    mdf = mdf[sorted(mdf.columns.tolist())]
-
-    return mdf, common_denominating_columns
-
-
 def finstate_in_year(stock_code, year, accounts, opendart):
 
     finstate = opendart.finstate_all(stock_code, year)
@@ -116,7 +99,8 @@ def finstate_in_year(stock_code, year, accounts, opendart):
             s.index.name = 'year'
             series.append(s)
         else:
-            print(f"[{account['label']} : {account['conditions']}] not exist!")
+            pass
+            # print(f"[{account['label']} : {account['conditions']}] not exist!")
 
     return pd.DataFrame({s.name: s for s in series})
 
@@ -129,6 +113,25 @@ def yearly_finstate(stock_code, start, end, accounts, opendart):
 
     mdf = mdf[~mdf.index.duplicated(keep='first')]
     return mdf
+
+
+def financial_statement(company, end, odr, start):
+
+    accounts = get_accounts()
+    mdf = yearly_finstate(company.corp_code, start, end, accounts, odr)
+
+    denominating_columns = [e['label'] for e in accounts]
+    common_denominating_columns = pick_common_columns(denominating_columns, mdf.columns)
+
+    for column in common_denominating_columns:
+        order = next(item for item in accounts if item["label"] == column)['order']
+        new_col_name = f'{order}.{column}(억)'
+        mdf[new_col_name] = mdf[column] / 100000000
+        mdf[new_col_name] = mdf[new_col_name].map('{:,.0f}'.format)
+
+    mdf = mdf[sorted(mdf.columns.tolist())]
+
+    return mdf, common_denominating_columns
 
 
 def yearly_company_performance(company, start, end, odr):
@@ -223,6 +226,7 @@ def finstate_in_quarter(stock_code, year, accounts, opendart):
 
     return None if len(dfs) == 0 else pd.concat(dfs, axis=0).sort_index(axis=0)
 
+
 def quarterly_company_performance(company, start, end, odr):
     accounts = get_accounts()
     mdf = None
@@ -256,12 +260,14 @@ def get_accounts():
 
             {'label': '지배기업소유주당기순이익', 'order': 2,
              'conditions': [{'account_id': 'full_ProfitLossAttributableToOwnersOfParent'},
+                            {'account_id': 'ifrs_ProfitLossAttributableToOwnersOfParent'},#금호고속
                             {'account_nm': '당기순이익', 'account_detail': '지배기업의 소유주'},
                             {'account_nm': '당기순이익', 'account_detail': '지배기업 소유주'},
                             {'account_nm': '당기순이익', 'account_detail': '지배지분 | 이익잉여금'},
                             {'account_nm': '분기순이익', 'account_detail': '지배기업의 소유주'},
                             {'account_nm': '분기순이익', 'account_detail': '지배기업 소유주'},
                             {'account_nm': '분기순이익', 'account_detail': '지배지분 | 이익잉여금'}, #SK가스
+                            {'account_nm': '분기순손익', 'account_detail': '지배기업의 소유주'}, #금호고속
                             {'account_nm': '분기순손실', 'account_detail': '지배기업의 소유주'},
                             {'account_nm': '반기순이익', 'account_detail': '지배기업의 소유주'},  # ifrs_ProfitLoss
                             {'account_nm': '반기순이익', 'account_detail': '지배기업 소유주'},
@@ -303,10 +309,10 @@ def test():
     dart.set_api_key(api_key=api_key)
     opendartreader = OpenDartReader(api_key)
     corp_list = dart.get_corp_list()
-    df = yearly_company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
+    #df = yearly_company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
 
     #df = quarterly_company_performance(corp_list.find_by_corp_name('삼성전자', exactly=True)[0], 2019, 2021, opendartreader)
-    #df = finstate_in_quarter('051500', 2020, get_accounts(), opendartreader)
+    df = finstate_in_quarter('073240', 2018, get_accounts(), opendartreader)
     print(df)
 
 

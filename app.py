@@ -30,7 +30,7 @@ def app():
                  if c.stock_code is not None ]
         names = sorted(names)
 
-        start = st.number_input("Start year", 2010)
+        start = st.number_input("Start year", 2015)
         selected_company = st.selectbox('select a company', names)
         company = corp_list.find_by_stock_code(selected_company[-6:])
 
