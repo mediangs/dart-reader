@@ -3,8 +3,8 @@ import dart_fss as dart
 import OpenDartReader
 from statement_helper import yearly_company_performance, quarterly_company_performance
 
-
 corps_loaded = False
+
 
 def load_corps():
     corp_list = dart.get_corp_list()
@@ -16,7 +16,7 @@ def app():
     global corps_loaded
 
     # Open DART API KEY 설정
-    api_key = st.text_input("Enter Dart api key")
+    # api_key = st.text_input("Enter Dart api key")
 
     if len(api_key) > 0:
         opendart = OpenDartReader(api_key)
@@ -33,6 +33,9 @@ def app():
         start = st.number_input("Start year", 2015)
         selected_company = st.selectbox('select a company', names)
         company = corp_list.find_by_stock_code(selected_company[-6:])
+
+        naver_url = f'<a href="https://finance.naver.com/item/main.nhn?code={company.stock_code}" target="_blank" rel="noopener noreferrer">네이버 금융링크</a>'
+        st.markdown(naver_url, unsafe_allow_html=True)
 
         if st.button('년간 사업보고서 : Get data!'):
             st.subheader(f'{selected_company}')

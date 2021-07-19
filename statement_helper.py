@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from pandas.api.types import is_numeric_dtype
 
-from dividend_helper import yearly_dividends_raw, yearly_dividends
+from dividend_helper import yearly_dividends_from_dart, yearly_dividends
 from share_helper import yearly_share_volume, yearly_share_prices
 
 
@@ -139,7 +139,7 @@ def yearly_company_performance(company, start, end, odr):
     dividend_criteria = [{'se': '주당순이익'}, {'se': '주당 현금배당금(원)'},
                          {'se': '현금배당수익률(%)'}]
 
-    annual_dividends = yearly_dividends(yearly_dividends_raw(company.corp_code, start, end), dividend_criteria)
+    annual_dividends = yearly_dividends(yearly_dividends_from_dart(company.corp_code, start, end), dividend_criteria)
     annual_share_prices = yearly_share_prices(company.stock_code, start, end)
     annual_share_volume = yearly_share_volume(company.stock_code, start, end, odr)
 

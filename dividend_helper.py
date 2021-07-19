@@ -1,8 +1,9 @@
+
 import dart_fss as dart
 import pandas as pd
 
 
-def yearly_dividends_raw(corp_code, start, end):
+def yearly_dividends_from_dart(corp_code, start, end):
     dividends = []
     for year in range(start, end + 1):
         try:
