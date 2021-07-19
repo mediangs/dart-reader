@@ -17,6 +17,7 @@ def app():
 
     # Open DART API KEY 설정
     # api_key = st.text_input("Enter Dart api key")
+    api_key = st.secrets["api_key"]
 
     if len(api_key) > 0:
         opendart = OpenDartReader(api_key)
