@@ -1,5 +1,6 @@
 import streamlit as st
 import dart_fss as dart
+import pandas as pd
 import OpenDartReader
 from statement_helper import yearly_company_performance, quarterly_company_performance
 
@@ -15,9 +16,13 @@ def app():
 
     global corps_loaded
 
+    quant_data = st.cache(pd.read_csv)('./data/quant-20212Q.csv')
+    st.write(quant_data)
+
     # Open DART API KEY 설정
-    # api_key = st.text_input("Enter Dart api key")
+    #api_key = st.text_input("Enter Dart api key")
     api_key = st.secrets["api_key"]
+
 
     if len(api_key) > 0:
         opendart = OpenDartReader(api_key)

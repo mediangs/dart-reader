@@ -277,24 +277,24 @@ def get_accounts():
 
                             ]},
 
-            {'label': '지배기업소유주자본', 'order': 3,
+            {'label': '지배기업소유주자본', 'order': 6,
              'conditions': [{'account_id': 'full_EquityAttributableToOwnersOfParent'},
                             {'account_id': 'ifrs_EquityAttributableToOwnersOfParent'}]},
 
-            {'label': '무형자산', 'order': 4,
+            {'label': '무형자산', 'order': 7,
              'conditions': [{'account_id': 'full_IntangibleAssetsOtherThanGoodwill'},
                             {'account_nm': '무형자산'}]},
 
-            {'label': '재고자산', 'order': 5,
+            {'label': '재고자산', 'order': 3,
              'conditions': [{'account_id': 'full_Inventories'},
                             {'account_nm': '재고자산'}]},
 
-            {'label': '매출채권', 'order': 6,
+            {'label': '매출채권', 'order': 4,
              'conditions': [{'account_id': 'ShortTermTradeReceivable'},
                             {'account_id': 'TradeAndOtherCurrentReceivables'},
                             {'account_nm': '매출채권'}]},
 
-            {'label': '부채총계', 'order': 7,
+            {'label': '부채총계', 'order': 5,
              'conditions': [{'account_id': 'full_Liabilities'},
                             {'account_nm': '부채총계'}]},
 
