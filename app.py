@@ -26,9 +26,9 @@ def app():
 
     # Open DART API KEY 설정
     #api_key = st.text_input("Enter Dart api key")
-    from key import api_key
+    #from key import api_key
 
-    #api_key = st.secrets["api_key"]
+    api_key = st.secrets["api_key"]
 
 
     if len(api_key) > 0:
