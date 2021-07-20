@@ -234,20 +234,23 @@ def quarterly_company_performance(company, start, end, odr):
         df = finstate_in_quarter(company.stock_code, year, accounts, odr)
         mdf = safe_df_append(mdf, df)
 
-    for column in mdf:
-        order = next(item for item in accounts if item["label"] == column)['order']
-        if is_numeric_dtype(mdf[column]):
-            new_col_name = f'{order}.{column}(억)'
-            mdf[new_col_name] = mdf[column] / 100000000
-            mdf[new_col_name] = mdf[new_col_name].map('{:,.0f}'.format)
-        else:
-            new_col_name = f'{order}.{column}'
-            mdf[new_col_name] = mdf[column]
+    if mdf is not None:
+        for column in mdf:
+            order = next(item for item in accounts if item["label"] == column)['order']
+            if is_numeric_dtype(mdf[column]):
+                new_col_name = f'{order}.{column}(억)'
+                mdf[new_col_name] = mdf[column] / 100000000
+                mdf[new_col_name] = mdf[new_col_name].map('{:,.0f}'.format)
+            else:
+                new_col_name = f'{order}.{column}'
+                mdf[new_col_name] = mdf[column]
 
-    mdf = mdf[sorted(mdf.columns.tolist())]
-    denominating_columns = [e['label'] for e in accounts]
-    mdf.drop(denominating_columns, axis=1, inplace=True)
-
+        mdf = mdf[sorted(mdf.columns.tolist())]
+        denominating_columns = [e['label'] for e in accounts]
+        mdf.drop(denominating_columns, axis=1, inplace=True)
+    else:
+        #print(f'Can not retrieve {company.corp_name} data')
+        mdf = f'Can not retrieve {company.corp_name} data'
     return mdf
 
 
@@ -311,8 +314,8 @@ def test():
     corp_list = dart.get_corp_list()
     #df = yearly_company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
 
-    #df = quarterly_company_performance(corp_list.find_by_corp_name('삼성전자', exactly=True)[0], 2019, 2021, opendartreader)
-    df = finstate_in_quarter('073240', 2018, get_accounts(), opendartreader)
+    df = quarterly_company_performance(corp_list.find_by_corp_name('한국쉘석유', exactly=True)[0], 2019, 2021, opendartreader)
+    #df = finstate_in_quarter('002960 ', 2018, get_accounts(), opendartreader)
     print(df)
 
 

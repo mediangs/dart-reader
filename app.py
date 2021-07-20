@@ -22,7 +22,6 @@ def app():
     select_category = st.sidebar.selectbox('업종선택(2021.1Q) 적자순', category)
     st.write(quant_data.loc[quant_data['업종 (대)'] == select_category])
 
-    #st.write(quant_data)
 
     # Open DART API KEY 설정
     #api_key = st.text_input("Enter Dart api key")
@@ -36,7 +35,8 @@ def app():
         dart.set_api_key(api_key=api_key)
 
         if not corps_loaded:
-            corp_list = load_corps()
+            with st.spinner('Loading...'):
+                corp_list = load_corps()
             corps_loaded = True
 
         names = [f'{c.corp_name} : {c.stock_code}' for c in corp_list.corps
@@ -52,13 +52,14 @@ def app():
 
         if st.sidebar.button('년간 사업보고서'):
             st.subheader(f'{selected_company} 년간 사업보고서')
-            company_sheet = yearly_company_performance(company, start, 2021, opendart)
+            with st.spinner('Loading...'):
+                company_sheet = yearly_company_performance(company, start, 2021, opendart)
             st.write(company_sheet)
 
         if st.sidebar.button('분기별 보고서'):
             st.subheader(f'{selected_company} 분기별 보고서')
-            q_company_sheet = quarterly_company_performance(company, start, 2021, opendart)
-            #components.html(q_company_sheet.to_html())
+            with st.spinner('Loading...'):
+                q_company_sheet = quarterly_company_performance(company, start, 2021, opendart)
             st.write(q_company_sheet)
 
 
