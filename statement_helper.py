@@ -272,6 +272,7 @@ def get_accounts():
                             {'account_nm': '분기순이익', 'account_detail': '지배지분 | 이익잉여금'}, #SK가스
                             {'account_nm': '분기순손익', 'account_detail': '지배기업의 소유주'}, #금호고속
                             {'account_nm': '분기순손실', 'account_detail': '지배기업의 소유주'},
+                            {'account_nm': '분기연결순이익', 'account_detail': '지배기업의 소유주'}, #SK이노베이션
                             {'account_nm': '반기순이익', 'account_detail': '지배기업의 소유주'},  # ifrs_ProfitLoss
                             {'account_nm': '반기순이익', 'account_detail': '지배기업 소유주'},
                             {'account_nm': '반기순이익', 'account_detail': '지배지분 | 이익잉여금'},
@@ -314,8 +315,8 @@ def test():
     corp_list = dart.get_corp_list()
     #df = yearly_company_performance(corp_list.find_by_corp_name('AJ네트웍스', exactly=True)[0], 2015, 2020, opendartreader)
 
-    df = quarterly_company_performance(corp_list.find_by_corp_name('한국쉘석유', exactly=True)[0], 2019, 2021, opendartreader)
-    #df = finstate_in_quarter('002960 ', 2018, get_accounts(), opendartreader)
+    #df = quarterly_company_performance(corp_list.find_by_corp_name('한국쉘석유', exactly=True)[0], 2019, 2021, opendartreader)
+    df = finstate_in_quarter('096770', 2021, get_accounts(), opendartreader)
     print(df)
 
 
