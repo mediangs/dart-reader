@@ -15,19 +15,26 @@ def load_corps():
 def app():
 
     global corps_loaded
+    st.set_page_config(layout="wide")
 
     quant_data = st.cache(pd.read_csv)('./data/quant-20212Q.csv')
     category = quant_data['업종 (대)'].unique()
 
     select_category = st.sidebar.selectbox('업종선택(2021.1Q) 적자순', category)
-    st.write(quant_data.loc[quant_data['업종 (대)'] == select_category])
+    filtered_qdf = quant_data.loc[quant_data['업종 (대)'] == select_category]
+    st.write(filtered_qdf)
+
+    _name = filtered_qdf['회사명'].to_list()
+    _code = [e[1:] for e in filtered_qdf['코드 번호'].to_list()]
+    filtered_name_code = [f'{x} : {y}' for x, y in zip(_name, _code)]
+
 
 
     # Open DART API KEY 설정
     #api_key = st.text_input("Enter Dart api key")
-    #from key import api_key
+    from key import api_key
 
-    api_key = st.secrets["api_key"]
+    #api_key = st.secrets["api_key"]
 
 
     if len(api_key) > 0:
@@ -39,12 +46,19 @@ def app():
                 corp_list = load_corps()
             corps_loaded = True
 
-        names = [f'{c.corp_name} : {c.stock_code}' for c in corp_list.corps
+        all_name_code = [f'{c.corp_name} : {c.stock_code}' for c in corp_list.corps
                  if c.stock_code is not None ]
-        names = sorted(names)
+
+        scope = st.sidebar.radio('범위', [f'{select_category}', '전체'])
+        if scope == '전체':
+            list_scope = sorted(all_name_code)
+        else:
+            list_scope = filtered_name_code
+
+        selected_company = st.sidebar.selectbox(f'select a company', list_scope)
 
         start = st.sidebar.number_input("Start year", 2015)
-        selected_company = st.sidebar.selectbox('select a company', names)
+
         company = corp_list.find_by_stock_code(selected_company[-6:])
 
         naver_url = f'<a href="https://finance.naver.com/item/main.nhn?code={company.stock_code}" target="_blank" rel="noopener noreferrer">네이버 금융링크</a>'
